@@ -1,23 +1,62 @@
 // @flow
-import type { Store as ReduxStore, Dispatch as ReduxDispatch } from 'redux';
-import type { ProviderState, ProviderAction, ProviderEvent } from './provider';
-import type { EtherBalanceState, EtherBalanceAction, EtherBalanceEvent } from './etherBalance';
-import type { EtherTxState, EtherTxAction, EtherTxEvent } from './etherTx';
+import type { Dispatch as ReduxDispatch, Store as ReduxStore } from 'redux';
+import type { SignerEvent, SignerSettingsAction, SignerState } from './signer';
+import type { EtherBalanceAction, EtherBalanceEvent, EtherBalanceState } from './etherBalance';
+import type { AccountBalancesAction, AccountBalancesEvent, AccountBalancesState } from './accountBalances';
+import type { SendEtherFormAction, SendEtherFormEvent, SendEtherFormState } from './sendEtherForm';
+import type { AccountState, AccountAction, AccountEvent } from './account';
+import type { LoginPageState, LoginPageAction, LoginPageEvent } from './loginPage';
+import type { LogoutPageAction } from './logoutPage';
+import type { DepositFormAction, DepositFormEvent, DepositFormState } from './depositForm';
+import type { SettingsAction, SettingsEvent, SettingsState } from './settings';
+import type { WalletsAction, WalletsEvent, WalletsState } from './wallets';
+import type { NotificationState } from './notifications';
 
 export type ReduxInitAction = { type: '@@INIT' };
-export type Action = ReduxInitAction | ProviderAction | EtherBalanceAction | EtherTxAction;
-export type Event = ProviderEvent | EtherBalanceEvent | EtherTxEvent;
+ 
+export type Action =
+  | ReduxInitAction
+  | EtherBalanceAction
+  | SendEtherFormAction
+  | AccountBalancesAction
+  | AccountAction
+  | DepositFormAction
+  | SettingsAction
+  | WalletsAction
+  | LoginPageAction
+  | LogoutPageAction
+  | SignerSettingsAction;
+
+export type Event =
+  | LoginPageEvent
+  | EtherBalanceEvent
+  | SendEtherFormEvent
+  | AccountBalancesEvent
+  | AccountEvent
+  | DepositFormEvent
+  | SettingsEvent
+  | WalletsEvent
+  | SignerEvent;
+
 export type ActionHandler = Action => Event;
 
 export type State = {
-  provider: ProviderState,
+  loginPage: LoginPageState,
+  signer: SignerState,
   etherBalance: EtherBalanceState,
-  etherTx: EtherTxState,
+  accountBalances: AccountBalancesState,
+  sendEtherForm: SendEtherFormState,
+  account: AccountState,
+  depositForm: DepositFormState,
+  settings: SettingsState,
+  wallets: WalletsState,
+  notifications: NotificationState,
 };
 
 export type Store = ReduxStore<State, Action>;
 export type Dispatch = ReduxDispatch<Action>;
 export type GetState = () => State;
 export type PromiseAction = Promise<Action>;
-export type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
-// export type Dispatch = (action: Action | ThunkAction | PromiseAction | Array<Action>) => any;
+export type ExtraArgument = { socket: Object } & { api: Object };
+export type ThunkAction = (dispatch: Dispatch, getState: GetState, ExtraArgument) => any;
+
