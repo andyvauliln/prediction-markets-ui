@@ -1,9 +1,10 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
-import { createStore } from '../../store';
-import connect, { mapStateToProps, mapDispatchToProps } from './connect';
-import getEtherBalance, * as etherBalanceActionCreators from '../../store/models/etherBalance';
+import createStore from '../../store/configureStore';
+import connect, { mapDispatchToProps, mapStateToProps } from './connect';
+import getEtherBalance from '../../store/models/etherBalance';
+import * as etherBalanceActionCreators from '../../store/models/etherBalance';
 
 jest.mock('../../store/models/etherBalance');
 
@@ -72,7 +73,7 @@ describe('mapDispatchToProps(dispatch, props)', () => {
 
 describe('connect(Component)', () => {
   it('injects certain props and renders without crashing', () => {
-    const store = createStore();
+    const { store } = createStore();
     const ConnectedTestComponent = connect(props => {
       expect(props).toBeDefined();
       expect(props).toHaveProperty('balance');
