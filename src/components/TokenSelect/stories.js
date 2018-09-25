@@ -7,8 +7,6 @@ import { withInfo } from '@storybook/addon-info';
 import { tokens } from '../../data';
 import TokenSelect from './TokenSelect';
 
-import '../../styles/reset.css';
-
 storiesOf('TokenSelect', module)
   .addDecorator(withKnobs)
   .add(
@@ -18,7 +16,7 @@ storiesOf('TokenSelect', module)
   .add(
     'Dark Theme',
     withInfo({ source: false })(() => (
-      <div class="pt-dark">
+      <div className="bp3-dark">
         <TokenSelect tokens={tokens} token={tokens[0]} onChange={action('onChange')} />
       </div>
     ))
