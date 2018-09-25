@@ -1,12 +1,12 @@
 // @flow
 import React from 'react';
 import SendEtherFormRenderer from './SendEtherFormRenderer';
-import { tokens } from '../../data';
 
-import type { EtherTxParams, TransferTokensTxParams } from '../../types/etherTx';
+import type { EtherTxParams, TransferTokensTxParams } from '../../types/sendEtherForm';
+import type { Token } from '../../types/tokens';
 
 type State = {
-  token: Object,
+  token: Token,
   amount: number,
   receiver: string,
   customGas: ?number,
@@ -14,6 +14,8 @@ type State = {
 };
 
 type Props = {
+  token: Token,
+  tokens: Array<Token>,
   loading: boolean,
   error: string,
   status: string,
@@ -30,7 +32,7 @@ type Props = {
 
 class SendEtherForm extends React.PureComponent<Props, State> {
   state = {
-    token: tokens[0],
+    token: this.props.token || this.props.tokens[0],
     amount: 0,
     receiver: '',
     sender: '',
@@ -75,6 +77,7 @@ class SendEtherForm extends React.PureComponent<Props, State> {
     gas = customGas || gas;
     gasPrice = customGasPrice || gasPrice;
 
+    console.log(amount, receiver, gas, gasPrice, token);
     if (this.state.token.address === '0x0') {
       sendEtherTx({ amount, receiver, gas, gasPrice });
     } else {
@@ -83,7 +86,7 @@ class SendEtherForm extends React.PureComponent<Props, State> {
   };
 
   render() {
-    let { loading, error, status, statusMessage, gas, gasPrice, hash, receipt } = this.props;
+    let { tokens, loading, error, status, statusMessage, gas, gasPrice, hash, receipt } = this.props;
     let { token, amount, receiver, customGas, customGasPrice } = this.state;
     gas = customGas || gas;
     gasPrice = customGasPrice || gasPrice;

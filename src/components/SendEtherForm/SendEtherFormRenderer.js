@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import styled from 'styled-components';
-import { InputGroup, Button, ControlGroup, Label } from '@blueprintjs/core';
+import { Button, ControlGroup, InputGroup, Label } from '@blueprintjs/core';
 import TokenSelect from '../TokenSelect';
 import GasSettings from '../GasSettings';
 import TxNotification from '../TxNotification';
@@ -43,7 +43,7 @@ const SendEtherFormRenderer = (props: Props) => {
 
   return (
     <div>
-      <Label helperText="(in ether or in token decimals)" text="Amount to Send">
+      <Label helpertext="(in ether or in token decimals)" text="Amount to Send">
         <ControlGroup fill vertical={false}>
           <InputGroup
             icon="filter"
@@ -56,7 +56,7 @@ const SendEtherFormRenderer = (props: Props) => {
         </ControlGroup>
       </Label>
       <br />
-      <Label text="Receiver Address" helperText="(should start with 0x)">
+      <Label text="Receiver Address" helpertext="(should start with 0x)">
         <InputGroup placeholder="Receiver" name="receiver" value={receiver} onChange={handleChange} />
       </Label>
       <br />

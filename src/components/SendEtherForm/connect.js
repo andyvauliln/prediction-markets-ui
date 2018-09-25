@@ -1,12 +1,33 @@
 // @flow
 import { connect } from 'react-redux';
-import etherTxModel, { validateEtherTx, sendEtherTx } from '../../store/models/etherTx';
-import { validateTransferTokensTx, sendTransferTokensTx } from '../../store/models/etherTokensTx';
+import getSendEtherFormSelector, {
+  sendEtherTx,
+  sendTransferTokensTx,
+  validateEtherTx,
+  validateTransferTokensTx,
+} from '../../store/models/sendEtherForm';
 
 import type { State } from '../../types';
+import type { Token } from '../../types/tokens';
 
-export const mapStateToProps = (state: State) => {
-  return etherTxModel(state).getState();
+type Props = {
+  token: Token,
+};
+
+export const mapStateToProps = (state: State, ownProps: Props) => {
+  const sendEtherFormSelector = getSendEtherFormSelector(state);
+
+  return {
+    token: ownProps.token,
+    loading: sendEtherFormSelector.isLoading(),
+    status: sendEtherFormSelector.getStatus(),
+    statusMessage: sendEtherFormSelector.getStatusMessage(),
+    gas: sendEtherFormSelector.getGas(),
+    gasPrice: sendEtherFormSelector.getGasPrice(),
+    hash: sendEtherFormSelector.getHash(),
+    receipt: sendEtherFormSelector.getReceipt(),
+    tokens: sendEtherFormSelector.tokens(),
+  };
 };
 
 export const mapDispatchToProps = {
