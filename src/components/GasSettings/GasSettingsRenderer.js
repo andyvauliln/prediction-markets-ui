@@ -1,5 +1,5 @@
 import React from 'react';
-import { Collapse, InputGroup, Button } from '@blueprintjs/core';
+import { Button, Collapse, InputGroup } from '@blueprintjs/core';
 
 import styled from 'styled-components';
 
@@ -18,10 +18,16 @@ const GasSettingsRenderer = (props: Props) => {
       <Button minimal text="Show Gas Settings" onClick={toggleVisible} />
       <Collapse isOpen={visible}>
         <InputGroupBox>
-          <InputGroup placeholder="Gas" value={gas} onChange={handleChange} />
+          <InputGroup type="number" placeholder="Gas" name="customGas" value={gas || ''} onChange={handleChange} />
         </InputGroupBox>
         <InputGroupBox>
-          <InputGroup placeholder="Gas Price" value={gasPrice} onChange={handleChange} />
+          <InputGroup
+            type="number"
+            placeholder="Gas Price"
+            name="customGasPrice"
+            value={gasPrice || ''}
+            onChange={handleChange}
+          />
         </InputGroupBox>
       </Collapse>
     </div>
