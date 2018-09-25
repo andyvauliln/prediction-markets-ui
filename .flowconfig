@@ -1,0 +1,27 @@
+[ignore]
+<PROJECT_ROOT>/node_modules/.*/spec/.*
+.*/node_modules/config-chain/test/broken.json
+
+[untyped]
+<PROJECT_ROOT>/lib/pkg/commons-node
+<PROJECT_ROOT>/lib/pkg/flow-base/lib/FlowHelpers.js
+
+[include]
+
+[libs]
+
+[options]
+suppress_comment=.*\\$FlowFixMe.*
+suppress_comment=.*\\$FlowIssue.*
+suppress_comment= \\(.\\|\n\\)*\\silence-error
+all=true
+
+module.system.node.resolve_dirname=node_modules
+
+esproposal.decorators=ignore
+esproposal.class_static_fields=enable
+esproposal.class_instance_fields=enable
+suppress_type=$FlowIssue
+suppress_type=$FlowFixMe
+[version]
+^0.68.0

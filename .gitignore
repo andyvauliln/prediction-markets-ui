@@ -5,6 +5,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+#css
+src/styles/css/*
+
 # Runtime data
 pids
 *.pid
@@ -54,12 +57,22 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
+#webstorm cofig files
+.idea
+.editorconfig
+
+#ignored css files
+src/styles/css/app.css
+
+#scss cache
+.sass-cache
+
 # dotenv environment variables file
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+#.env
+#.env.local
+#.env.development.local
+#.env.test.local
+#.env.production.local
 
 # next.js build output
 .next
@@ -72,3 +85,7 @@ package-lock.json
 
 # misc
 .DS_Store
+wallaby.js
+
+#To Kepp the chain state unchanged
+chain/
