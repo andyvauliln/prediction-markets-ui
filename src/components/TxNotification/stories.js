@@ -1,7 +1,6 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
-import { withKnobs, text } from '@storybook/addon-knobs/react';
+import { text, withKnobs } from '@storybook/addon-knobs/react';
 import { withInfo } from '@storybook/addon-info';
 import { Card } from '@blueprintjs/core';
 import { receipt } from '../../data';
@@ -19,7 +18,7 @@ storiesOf('TxNotification', module)
   .add(
     'Valid',
     withInfo({ text: README, source: false })(() => (
-      <div className="pt-dark">
+      <div className="bp3-dark">
         <Card>
           <TxNotification
             loading={false}
@@ -36,7 +35,7 @@ storiesOf('TxNotification', module)
   .add(
     'Invalid',
     withInfo({ text: README, source: false })(() => (
-      <div className="pt-dark">
+      <div className="bp3-dark">
         <Card>
           <TxNotification
             loading={false}
@@ -52,7 +51,7 @@ storiesOf('TxNotification', module)
   .add(
     'Pending',
     withInfo({ text: README, source: false })(() => (
-      <div className="pt-dark">
+      <div className="bp3-dark">
         <Card>
           <TxNotification loading={false} hash={receipt.hash} receipt={receipt} status="sent" statusMessage="" />
         </Card>
@@ -62,7 +61,7 @@ storiesOf('TxNotification', module)
   .add(
     'Confirmed',
     withInfo({ text: README, source: false })(() => (
-      <div className="pt-dark">
+      <div className="bp3-dark">
         <Card>
           <TxNotification
             loading={false}
@@ -78,7 +77,7 @@ storiesOf('TxNotification', module)
   .add(
     'Reverted',
     withInfo({ text: README, source: false })(() => (
-      <div className="pt-dark">
+      <div className="bp3-dark">
         <Card>
           <TxNotification
             loading={false}
@@ -94,7 +93,7 @@ storiesOf('TxNotification', module)
   .add(
     'Error',
     withInfo({ text: README, source: false })(() => (
-      <div className="pt-dark">
+      <div className="bp3-dark">
         <Card>
           <TxNotification
             loading={false}
