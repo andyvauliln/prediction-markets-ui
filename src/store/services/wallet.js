@@ -1,8 +1,18 @@
-import ethers from 'ethers';
-const Wallet = ethers.Wallet;
+import { Wallet } from 'ethers';
+import { getProvider } from './signer';
 
 export const getDefaultWalletAddress = () => {
-  return 'some address';
+  return '0xe8e84ee367bc63ddb38d3d01bccef106c194dc47';
+};
+
+export const getDefaultPrivateKey = () => {
+  return '';
+};
+
+export const getCurrentBlock = async () => {
+  const provider = getProvider();
+  const block = await provider.getBlock();
+  return block.number;
 };
 
 /**
@@ -31,18 +41,27 @@ export const createRandomWallet = async () => {
  * @returns [Object] - Ethers.js wallet object
  */
 export const createWalletFromPrivateKey = privateKey => {
-  let wallet = new Wallet(privateKey);
-  return wallet;
+  let wallet;
+  try {
+    wallet = new Wallet(privateKey);
+  } catch (e) {}
+  return { wallet };
 };
 
-/**
- * @description Creates an (unencrypted) ethers.js wallet object
- * @param mnemonic [String] - 12 word mnemonic string
- * @returns [Object] - Ethers.js wallet object
- */
-export const createWalletFromMemnonic = mnemonic => {
-  let wallet = Wallet.fromMnemonic(mnemonic);
-  return wallet;
+export const createWalletFromJSON = async (encryptedWallet, password) => {
+  let wallet;
+  try {
+    wallet = await Wallet.fromEncryptedWallet(encryptedWallet, password);
+  } catch (e) {}
+  return { wallet, encryptedWallet };
+};
+
+export const createWalletFromMnemonic = async mnemonic => {
+  let wallet;
+  try {
+    wallet = await Wallet.fromMnemonic(mnemonic);
+  } catch (e) {}
+  return { wallet };
 };
 
 /**
@@ -54,8 +73,8 @@ export const createWalletFromMemnonic = mnemonic => {
 export const createAndEncryptWallet = async (password, callback) => {
   let wallet = await Wallet.createRandom();
   let address = wallet.address;
-  let serialized = await wallet.encrypt(password, callback);
-  return { serialized, address };
+  let encryptedWallet = await wallet.encrypt(password, callback);
+  return { address, encryptedWallet };
 };
 
 /**
@@ -72,13 +91,30 @@ export const decryptWallet = async (jsonWallet, password) => {
 export const saveWalletInSessionStorage = wallet => {
   let address = wallet.address;
   let privateKey = wallet.privateKey;
-
   sessionStorage.setItem(address, privateKey);
 };
 
 export const getWalletFromSessionStorage = address => {
   let privateKey = sessionStorage.getItem(address);
-
   let wallet = new Wallet(privateKey);
   return wallet;
+};
+
+export const savePrivateKeyInSessionStorage = async ({ address, password, encryptedWallet, privateKey }) => {
+  if (!privateKey) privateKey = await decryptWallet(encryptedWallet, password);
+  sessionStorage.setItem(address, privateKey);
+};
+
+export const getPrivateKeyFromSessionStorage = address => {
+  let key = sessionStorage.getItem(address);
+  return key;
+};
+
+export const saveEncryptedWalletInLocalStorage = (address, encryptedWallet) => {
+  localStorage.setItem(address, encryptedWallet);
+};
+
+export const getEncryptedWalletFromLocalStorage = address => {
+  let encryptedWallet = localStorage.getItem(address);
+  return encryptedWallet;
 };

@@ -1,67 +1,129 @@
-import { Wallet } from 'ethers';
-import { getProvider } from './provider';
-import { getDefaultWalletAddress, getWalletFromSessionStorage } from './wallet';
+// @flow
+import { providers, Wallet } from 'ethers';
+import type { UpdateSignerParams } from '../../types/signer';
 
-//TODO
-export const PrivateKeySigner = (privateKey, provider) => {
-  this.wallet = new Wallet(privateKey);
-  this.provider = provider;
-  this.getAddress = async () => {
-    return this.wallet.address;
-  };
-  this.sign = async tx => {};
-  return {
-    provider: this.provider,
-    getAddress: this.getAddress,
-    sign: this.sign,
-  };
-};
+export const createSigner = async (params: UpdateSignerParams): any => {
+  try {
+    let { type, custom, url, networkId, wallet } = params;
+    let settings, address;
+    if (!custom) {
+      switch (type) {
+        case 'metamask':
+          if (typeof window.web3 === 'undefined') throw new Error('Metamask not installed');
+          if (typeof window.web3.eth.defaultAccount === 'undefined') throw new Error('Metamask account locked');
+          address = await createMetamaskSigner();
+          settings = { type: 'metamask', networkId };
+          return { settings, address };
+        case 'rpc':
+          settings = { type: 'rpc', url: 'http://127.0.0.1:8545', networkId: 8888 };
+          address = await createRpcSigner(settings.url, settings.networkId);
+          return { settings, address };
+        case 'wallet':
+          if (!wallet) throw new Error('Wallet not found');
+          networkId = networkId || 8888;
+          settings = { type: 'wallet', url: 'http://127.0.0.1:8545', networkId: 8888 };
+          address = await createLocalWalletSigner(wallet, networkId);
+          return { settings, address };
+        default:
+          throw new Error('Incorrect type');
+      }
+    } else {
+      switch (type) {
+        case 'metamask':
+          if (typeof window.web3 === 'undefined') throw new Error('Metamask not installed');
+          if (typeof window.web3.eth.defaultAccount === 'undefined') throw new Error('Metamask account locked');
+          settings = { type };
+          address = await createMetamaskSigner();
+          return { settings, address };
 
-//TODO
-export const WalletSigner = async (wallet, provider) => {
-  this.getAddress = async () => {
-    return wallet.address;
-  };
-  this.sign = async () => {};
+        case 'rpc':
+          settings = { type, url, networkId };
+          address = await createRpcSigner(url, networkId);
+          return { settings, address };
 
-  return {
-    provider: this.wallet,
-    getAddress: this.getAddress,
-    sign: this.sign,
-  };
-};
-
-export const MetamaskSigner = async (provider, accountIndex) => {
-  let accounts = await provider.listAccounts();
-  let signer = provider.getSigner(accounts[accountIndex]);
-  return signer;
-};
-
-export const LocalSigner = async provider => {
-  let accounts = await provider.listAccounts();
-  let signer = provider.getSigner(accounts[0]);
-  return signer;
-};
-
-export const getDefaultSigner = async getState => {
-  let signer;
-  let { provider, type } = getProvider();
-
-  switch (type) {
-    case 'metamask':
-      signer = await MetamaskSigner(provider, 0);
-      break;
-    case 'wallet':
-      let address = getDefaultWalletAddress(getState);
-      let wallet = getWalletFromSessionStorage(address);
-      signer = await WalletSigner(wallet, provider);
-      break;
-    case 'local':
-      signer = await LocalSigner(provider);
-      break;
-    default:
-      throw new Error('Could not get signer');
+        case 'wallet':
+          if (!wallet) throw new Error('Wallet not found');
+          networkId = networkId || 8888;
+          settings = { type, url, networkId };
+          address = await createLocalWalletSigner(wallet, networkId);
+          return { settings, address };
+        default:
+          throw new Error('Incorrect type');
+      }
+    }
+  } catch (e) {
+    console.log(e);
+    throw new Error(e.message);
   }
-
-  return signer;
 };
+
+export const createMetamaskSigner = async () => {
+  let networkId = Number(window.web3.version.network);
+  let provider = new providers.Web3Provider(window.web3.currentProvider, {
+    chainId: networkId,
+    name: 'unspecified',
+  });
+
+  let accountAddresses = await provider.listAccounts();
+  let signer = provider.getSigner(accountAddresses[0]);
+
+  window.signer = {
+    instance: signer,
+    type: 'metamask',
+  };
+
+  return { address: accountAddresses[0], networkId };
+};
+
+export const createLocalWalletSigner = async (wallet: Object, networkId: ?number) => {
+  networkId = networkId || 8888;
+  let provider = new providers.JsonRpcProvider('http://127.0.0.1:8545', {
+    chainId: networkId,
+    name: 'unspecified',
+  });
+
+  let signer = new Wallet(wallet.privateKey, provider);
+
+  window.signer = {
+    instance: signer,
+    type: 'wallet',
+  };
+
+  return wallet.address;
+};
+
+export const createInfuraRinkebyWalletSigner = async (wallet: Object) => {
+  let provider = new providers.InfuraProvider('rinkeby');
+  let signer = new Wallet(wallet.key, provider);
+
+  window.signer = {
+    instance: signer,
+    type: 'wallet',
+  };
+
+  return wallet.address;
+};
+
+export const createInfuraWalletSigner = async (wallet: Object) => {
+  let provider = new providers.InfuraProvider('homestead');
+  let signer = new Wallet(wallet.key, provider);
+
+  window.signer = {
+    instance: signer,
+    type: 'wallet',
+  };
+
+  return wallet.address;
+};
+
+export const createRpcSigner = async (url: ?string, networkId: ?number) => {
+  let provider = new providers.JsonRpcProvider(url, { chainId: networkId, name: 'unspecified' });
+  let accountAddresses = await provider.listAccounts();
+  let signer = provider.getSigner(accountAddresses[0]);
+
+  window.signer = { instance: signer, type: 'local' };
+  return accountAddresses[0];
+};
+
+export const getSigner = () => window.signer.instance;
+export const getProvider = () => window.signer.instance.provider;
