@@ -1,7 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import { withKnobs, text } from '@storybook/addon-knobs/react';
+import { text, withKnobs } from '@storybook/addon-knobs/react';
 import { withInfo } from '@storybook/addon-info';
 import NetworkSelect from './NetworkSelect';
 import README from './README.md';
@@ -19,7 +19,7 @@ storiesOf('NetworkSelect', module)
   .add(
     'Default Export',
     withInfo({ text: README, source: false })(() => (
-      <div className="pt-dark">
+      <div className="bp3-dark">
         <NetworkSelect networks={networks} handleChange={action('handleChange')} networkId={1} />
       </div>
     ))
